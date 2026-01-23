@@ -1,0 +1,36 @@
+import "./App.css"
+import { Routes, Route } from "react-router"
+import { TasksPage } from "./pages/tasks/TasksPage"
+import { SignupPage } from "./pages/auth/SignupPage"
+import { MainLayout } from "./layouts/MainLayout"
+import { LoginPage } from "./pages/auth/LoginPage"
+import { AuthLayout } from "./layouts/AuthLayout"
+import { AdminLayout } from "./layouts/AdminLayout"
+import { AdminPage } from "./pages/admin/AdminPage"
+import { UsersPage } from "./pages/user/UsersPage"
+import { CreateUserFormPage } from "./pages/user/CreateUserFormPage"
+import { UpdateUserProfilePage } from "./pages/user/UpdateUserProfilePage"
+import { TaskFormPage } from "./pages/tasks/TaskFormPage"
+
+function App() {
+  return (
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route element={<AuthLayout />}>
+          <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/tasks/form" element={<TaskFormPage />} />
+          <Route path="/profile" element={<UpdateUserProfilePage />} />
+          <Route element={<AdminLayout />}>
+            <Route path="/admin-page" element={<AdminPage key="admin" />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/users/form" element={<CreateUserFormPage />} />
+          </Route>
+        </Route>
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Route>
+    </Routes>
+  )
+}
+
+export default App
