@@ -33,7 +33,6 @@ export const LoginPage = () => {
         },
         { withCredentials: true },
       )
-      console.log(res)
       setUserData(res.data.data)
       window.alert("Logged in successfully!")
 
