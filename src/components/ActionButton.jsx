@@ -13,7 +13,7 @@ export const ActionButton = ({
     className={`
       flex items-center justify-center px-3 py-2 rounded-lg enabled:hover:bg-gray-300
       ${bgColor} ${textColor}
-      enabled:cursor-pointer disabled:opacity-50
+      enabled:cursor-pointer disabled:opacity-40
       ${className}
     `}
   >
