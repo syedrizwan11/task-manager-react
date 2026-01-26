@@ -24,35 +24,11 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
           {task.title.toUpperCase()}
         </h1>
         <div className="flex gap-2">
-          {!task.completedAt &&
-            (task.assignedTo?._id === user?.id ||
-              user.role === UserRole.ADMIN) && (
-              <MarkTaskAsCompleted
-                taskId={task._id}
-                getUpdatedTaskData={onUpdate}
-              />
-            )}
-          {!task.completedAt && user?.role === "admin" && (
-            <AssignTask
-              assignedTo={task.assignedTo?.email}
-              taskId={task._id}
-              userId={user.id}
-              getUpdatedTaskData={onUpdate}
-            />
-          )}
-          <ActionButton
-            onClick={() => navigate(`/tasks/form?taskId=${task._id}`)}
-            disabled={task.createdBy._id !== user.id || task.completedAt}
-            icon={FiEdit}
-          />
-          <ActionButton
-            onClick={() => onDelete(task._id)}
-            disabled={!canDelete}
-            icon={MdDelete}
-            bgColor="bg-gray-200"
-            textColor="text-red-500"
-            border="border-none"
-          />
+          <span
+            className={`inline-flex items-center gap-1 px-3 py-1 text-xs font-medium rounded-full uppercase ${task.status === TaskStatus.COMPLETED ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}
+          >
+            {task.status}
+          </span>
         </div>
       </div>
 
@@ -67,14 +43,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
           <span className="font-medium text-gray-700">Created By:</span>{" "}
           {task.createdBy.email}
         </p>
-        <p>
-          <span className="font-medium text-gray-700">Status:</span>{" "}
-          <span
-            className={`font-semibold ${task.status === TaskStatus.COMPLETED ? "text-green-700" : "text-orange-500"}`}
-          >
-            {task.status === TaskStatus.COMPLETED ? "Completed" : "Pending"}
-          </span>
-        </p>
+
         {task.completedAt && (
           <p>
             <span className="font-medium text-gray-700">Completed At:</span>{" "}
@@ -87,6 +56,38 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
             {task.assignedTo.email}
           </p>
         )}
+      </div>
+      <div className="mt-4 flex items-center gap-2 justify-end">
+        {!task.completedAt && (
+          <MarkTaskAsCompleted
+            taskId={task._id}
+            getUpdatedTaskData={onUpdate}
+            disabled={
+              task.assignedTo?._id !== user?.id && user.role !== UserRole.ADMIN
+            }
+          />
+        )}
+        {!task.completedAt && user?.role === "admin" && (
+          <AssignTask
+            assignedTo={task.assignedTo?.email}
+            taskId={task._id}
+            userId={user.id}
+            getUpdatedTaskData={onUpdate}
+          />
+        )}
+        <ActionButton
+          onClick={() => navigate(`/tasks/form?taskId=${task._id}`)}
+          disabled={task.createdBy._id !== user.id || task.completedAt}
+          icon={FiEdit}
+        />
+        <ActionButton
+          onClick={() => onDelete(task._id)}
+          disabled={!canDelete}
+          icon={MdDelete}
+          bgColor="bg-gray-200"
+          textColor="text-red-500"
+          border="border-none"
+        />{" "}
       </div>
     </div>
   )

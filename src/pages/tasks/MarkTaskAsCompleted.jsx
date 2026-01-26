@@ -1,8 +1,14 @@
 import axios from "axios"
 import { TASK_COMPLETE_API_URL } from "../../constants"
 import { useState } from "react"
+import { ActionButton } from "../../components/ActionButton"
+import { MdTaskAlt } from "react-icons/md"
 
-export const MarkTaskAsCompleted = ({ taskId, getUpdatedTaskData }) => {
+export const MarkTaskAsCompleted = ({
+  taskId,
+  getUpdatedTaskData,
+  disabled,
+}) => {
   const [loading, setLoading] = useState(false)
 
   const completeTask = async (id) => {
@@ -24,11 +30,14 @@ export const MarkTaskAsCompleted = ({ taskId, getUpdatedTaskData }) => {
     }
   }
   return (
-    <button
+    <ActionButton
       onClick={() => completeTask(taskId)}
-      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 cursor-pointer"
-    >
-      {loading ? "Marking Complete..." : "Mark Complete"}
-    </button>
+      disabled={disabled || loading}
+      icon={MdTaskAlt}
+      bgColor="bg-green-600"
+      textColor="text-white"
+      label="Mark As Completed"
+      className="enabled:hover:bg-green-700"
+    />
   )
 }
