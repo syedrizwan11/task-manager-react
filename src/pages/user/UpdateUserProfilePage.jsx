@@ -7,6 +7,7 @@ import {
 } from "../../constants"
 import { useAuth } from "../../hooks/useAuth"
 import { BackButton } from "../../components/BackButton"
+import { gotoDashboard } from "../../utils/gotoDashboard"
 
 export const UpdateUserProfilePage = () => {
   const { user } = useAuth()
@@ -36,10 +37,7 @@ export const UpdateUserProfilePage = () => {
         },
         { withCredentials: true },
       )
-      window.open(
-        user.role === UserRole.ADMIN ? "/admin-page" : "/tasks",
-        "_self",
-      )
+      gotoDashboard(user.role)
       window.alert("Operation successful!")
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
