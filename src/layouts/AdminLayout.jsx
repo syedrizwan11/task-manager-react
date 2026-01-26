@@ -8,7 +8,6 @@ export const AdminLayout = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("AdminLayout - user role:", user?.role)
     if (user?.role !== UserRole.ADMIN) {
       navigate("/login")
     }

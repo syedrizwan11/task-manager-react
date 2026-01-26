@@ -1,7 +1,7 @@
 import axios from "axios"
 import { AuthContext } from "./userContext"
 import { useEffect, useState } from "react"
-import { TOKEN_DECODE_API_URL } from "../constants"
+import { TOKEN_DECODE_API_URL } from "../../constants"
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
