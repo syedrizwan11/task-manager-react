@@ -67,7 +67,7 @@ export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
       <select
         value={selectedEmail}
         onChange={handleChange}
-        className="block w-full py-2 text-center border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        className="block w-full py-1.5 text-center border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
       >
         <option disabled value="">
           {loading ? "Loading..." : "Assign to"}
