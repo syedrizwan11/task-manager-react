@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { USER_API_URL, TASK_ASSIGN_API_URL } from "../../constants"
-import { GrStatusGood } from "react-icons/gr"
 
 export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
   const [users, setUsers] = useState([])
@@ -64,7 +63,7 @@ export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
   }
 
   return (
-    <div className="max-w-xs flex gap-4 items-center">
+    <div className="w-full flex gap-4 items-center">
       <select
         value={selectedEmail}
         onChange={handleChange}
