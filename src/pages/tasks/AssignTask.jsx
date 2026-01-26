@@ -1,37 +1,10 @@
-import { useEffect, useState } from "react"
+import { useContext } from "react"
 import axios from "axios"
 import { USER_API_URL, TASK_ASSIGN_API_URL } from "../../constants"
+import { UsersContext } from "../../context/users/usersContext"
 
 export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
-  const [users, setUsers] = useState([])
-  const [selectedEmail, setSelectedEmail] = useState("")
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true)
-      try {
-        const res = await axios.get(USER_API_URL, {
-          withCredentials: true,
-        })
-        setUsers(res.data.data)
-      } catch (err) {
-        console.error("Failed to fetch users:", err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUsers()
-  }, [])
-
-  useEffect(() => {
-    if (!users || !assignedTo) return
-
-    const assignedUser = users.find((u) => u.email === assignedTo)
-    if (!assignedUser) return
-    setSelectedEmail(assignedUser.email)
-  }, [assignedTo, users])
+  const { users, loading } = useContext(UsersContext)
 
   const assignTask = async (userId) => {
     try {
@@ -54,7 +27,6 @@ export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
 
   const handleChange = (e) => {
     const email = e.target.value
-    setSelectedEmail(email)
 
     const user = users.find((u) => u.email === email)
     if (user) {
@@ -65,7 +37,7 @@ export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
   return (
     <div className="w-full flex gap-4 items-center">
       <select
-        value={selectedEmail}
+        value={assignedTo || ""}
         onChange={handleChange}
         className="block w-full py-1.5 text-center border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
       >
