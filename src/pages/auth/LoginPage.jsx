@@ -1,8 +1,9 @@
 import axios from "axios"
 import { useState } from "react"
-import { LOGIN_API_URL, SIGNUP_API_URL, UserRole } from "../../constants"
+import { LOGIN_API_URL } from "../../constants"
 import { Link } from "react-router"
 import { useAuth } from "../../hooks/useAuth"
+import { gotoDashboard } from "../../utils/gotoDashboard"
 
 export const LoginPage = () => {
   const { setUserData } = useAuth()
@@ -35,10 +36,7 @@ export const LoginPage = () => {
       )
       setUserData(res.data.data)
       window.alert("Logged in successfully!")
-
-      if (res.data.data.role === UserRole.ADMIN)
-        window.open("/admin-page", "_self")
-      else window.open("/tasks", "_self")
+      gotoDashboard(res.data.data.role)
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         window.alert(err.response.data.error)

@@ -5,8 +5,8 @@ import { TASKS_API_URL, UserRole } from "../../constants"
 import { Loader } from "../../components/Loader"
 import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
-import { adminTaskGroups } from "./adminTaskGroups"
-import { userTaskGroups } from "./userTaskGroups"
+import { adminTaskGroups } from "../../utils/tasks/adminTaskGroups"
+import { userTaskGroups } from "../../utils/tasks/userTaskGroups"
 import { TaskSection } from "./TaskSection"
 
 export const TasksPage = () => {
