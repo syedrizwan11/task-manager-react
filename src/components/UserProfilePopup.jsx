@@ -9,7 +9,7 @@ const UserProfilePopup = () => {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const popupRef = useRef(null)
-  const { user } = useAuth()
+  const { user, setUserData } = useAuth()
 
   const handleLogout = async () => {
     try {
@@ -20,6 +20,7 @@ const UserProfilePopup = () => {
       )
 
       if (response.data.success) {
+        setUserData(null)
         navigate("/login")
       }
     } catch (error) {

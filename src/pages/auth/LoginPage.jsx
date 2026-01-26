@@ -1,12 +1,12 @@
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { LOGIN_API_URL } from "../../constants"
 import { Link } from "react-router"
 import { useAuth } from "../../hooks/useAuth"
 import { gotoDashboard } from "../../utils/gotoDashboard"
 
 export const LoginPage = () => {
-  const { setUserData } = useAuth()
+  const { setUserData, user } = useAuth()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -36,7 +36,6 @@ export const LoginPage = () => {
       )
       setUserData(res.data.data)
       window.alert("Logged in successfully!")
-      gotoDashboard(res.data.data.role)
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         window.alert(err.response.data.error)
@@ -47,6 +46,10 @@ export const LoginPage = () => {
       setLoading(false)
     }
   }
+  useEffect(() => {
+    if (!user) return
+    gotoDashboard(user.role)
+  }, [user])
 
   return (
     <form
