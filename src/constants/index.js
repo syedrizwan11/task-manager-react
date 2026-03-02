@@ -17,6 +17,7 @@ export const TASK_COUNT_API_URL = "http://localhost:3000/api/tasks-count"
 
 export const TaskStatus = {
   PENDING: "pending",
+  INPROGRESS: "inProgress",
   COMPLETED: "completed",
 }
 

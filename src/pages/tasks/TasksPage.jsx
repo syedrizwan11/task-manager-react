@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import axios from "axios"
-import { TASKS_API_URL, UserRole } from "../../constants"
+import { TASKS_API_URL, TaskStatus, UserRole } from "../../constants"
 import { Loader } from "../../components/Loader"
 import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
-import { adminTaskGroups } from "../../utils/tasks/adminTaskGroups"
-import { userTaskGroups } from "../../utils/tasks/userTaskGroups"
 import { TaskSection } from "./TaskSection"
+import { DndContext } from "@dnd-kit/core"
+import { taskGroupsByStatus } from "../../utils/tasks/taskGroupsByStatus"
 
 export const TasksPage = () => {
   const [tasks, setTasks] = useState([])
@@ -48,79 +48,69 @@ export const TasksPage = () => {
 
   const isAdmin = user.role === UserRole.ADMIN
 
-  const adminGroups = adminTaskGroups(tasks)
-  const userGroups = userTaskGroups(tasks, user.id)
+  const taskGroups = taskGroupsByStatus(tasks)
+
+  const handleDragEnd = (event) => {
+    const { active, over } = event
+    if (over) {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task._id === active.id
+            ? { ...task, status: over.data.current.type }
+            : task,
+        ),
+      )
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="flex items-center justify-between mb-8">
-        {isAdmin && <BackButton label="Dashboard" to="/admin-page" />}
-        <h2 className="text-2xl font-bold">Tasks</h2>
-        <Link
-          to="/tasks/form"
-          className="bg-blue-800 text-white px-8 py-2 rounded-full hover:bg-blue-700 text-xl"
-        >
-          + Create Task
-        </Link>
-      </div>
-
-      {loading && <Loader />}
-
-      {tasks.length === 0 && !loading && (
-        <p className="text-gray-500 text-center">No tasks available</p>
-      )}
-
-      {!loading && tasks.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
-          {isAdmin ? (
-            <>
-              <TaskSection
-                title="Unassigned Tasks"
-                tasks={adminGroups.unassigned}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-              />
-
-              <TaskSection
-                title="Assigned Tasks"
-                tasks={adminGroups.assigned}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-              />
-
-              <TaskSection
-                title="Completed Tasks"
-                tasks={adminGroups.completed}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-              />
-            </>
-          ) : (
-            <>
-              <TaskSection
-                title="Created by You"
-                tasks={userGroups.createdByYou}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-              />
-
-              <TaskSection
-                title="Assigned to You"
-                tasks={userGroups.assignedToYou}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-              />
-
-              <TaskSection
-                title="Completed Tasks"
-                tasks={userGroups.completed}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-              />
-            </>
-          )}
+    <DndContext onDragEnd={handleDragEnd}>
+      <div className="min-h-screen bg-gray-100 p-6">
+        <div className="flex items-center justify-between mb-8">
+          {isAdmin && <BackButton label="Dashboard" to="/admin-page" />}
+          <h2 className="text-2xl font-bold">Tasks</h2>
+          <Link
+            to="/tasks/form"
+            className="bg-blue-800 text-white px-8 py-2 rounded-full hover:bg-blue-700 text-xl"
+          >
+            + Create Task
+          </Link>
         </div>
-      )}
-    </div>
+
+        {loading && <Loader />}
+
+        {tasks.length === 0 && !loading && (
+          <p className="text-gray-500 text-center">No tasks available</p>
+        )}
+
+        {!loading && tasks.length > 0 && (
+          <div className="grid grid-cols-3">
+            <TaskSection
+              title="Pending Tasks"
+              type={TaskStatus.PENDING}
+              tasks={taskGroups.pending}
+              onDelete={deleteTask}
+              onUpdate={updateCurrentTask}
+            />
+
+            <TaskSection
+              title="In Progress Tasks"
+              type={TaskStatus.INPROGRESS}
+              tasks={taskGroups.inProgress}
+              onDelete={deleteTask}
+              onUpdate={updateCurrentTask}
+            />
+
+            <TaskSection
+              title="Completed Tasks"
+              type={TaskStatus.COMPLETED}
+              tasks={taskGroups.completed}
+              onDelete={deleteTask}
+              onUpdate={updateCurrentTask}
+            />
+          </div>
+        )}
+      </div>
+    </DndContext>
   )
 }

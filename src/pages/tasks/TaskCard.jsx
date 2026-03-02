@@ -6,17 +6,28 @@ import { AssignTask } from "./AssignTask"
 import { MarkTaskAsCompleted } from "./MarkTaskAsCompleted"
 import { useAuth } from "../../hooks/useAuth"
 import { useNavigate } from "react-router"
+import { useDraggable } from "@dnd-kit/core"
+import { CSS } from "@dnd-kit/utilities"
 
 export const TaskCard = ({ task, onDelete, onUpdate }) => {
+  const { setNodeRef, listeners, attributes, transform } = useDraggable({
+    id: task._id,
+  })
   const navigate = useNavigate()
   const { user } = useAuth()
-  let canDelete =
+  const canDelete =
     user.role === UserRole.ADMIN ||
     (task.createdBy._id === user.id &&
       (!task.assignedTo || task.assignedTo._id === user.id))
 
+  const style = { transform: CSS.Translate.toString(transform) }
+
   return (
     <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={style}
       className={`bg-white p-5 rounded-lg border border-gray-200 shadow-sm ${task.completed ? "opacity-60" : ""}`}
     >
       <div className="flex justify-between items-center py-2">
