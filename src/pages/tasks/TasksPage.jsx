@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
 import axios from "axios"
-import { TASKS_API_URL, TaskStatus, UserRole } from "../../constants"
+import {
+  TASKS_API_URL,
+  TaskStatus,
+  UPDATE_TASK_STATUS_API_URL,
+  UserRole,
+} from "../../constants"
 import { Loader } from "../../components/Loader"
 import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
@@ -46,21 +51,42 @@ export const TasksPage = () => {
     )
   }
 
+  const updateTaskStatus = async (taskId, status) => {
+    const task = tasks.find((t) => t._id === taskId)
+    const prevTaskStatus = {
+      status: task.status,
+      completedAt: task.completedAt,
+    }
+    updateCurrentTask(taskId, { status })
+
+    try {
+      const res = await axios.patch(
+        `${UPDATE_TASK_STATUS_API_URL.replace(":id", taskId)}`,
+        {
+          status,
+        },
+        { withCredentials: true },
+      )
+
+      updateCurrentTask(taskId, {
+        status: res.data.data.status,
+        completedAt: res.data.data.completedAt,
+      })
+    } catch (error) {
+      updateCurrentTask(taskId, prevTaskStatus)
+      console.error("Failed to update task status", error)
+    }
+  }
+
   const isAdmin = user.role === UserRole.ADMIN
 
   const taskGroups = taskGroupsByStatus(tasks)
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = async (event) => {
     const { active, over } = event
-    if (over) {
-      setTasks((prev) =>
-        prev.map((task) =>
-          task._id === active.id
-            ? { ...task, status: over.data.current.type }
-            : task,
-        ),
-      )
-    }
+
+    if (over && active.data.current.type !== over.data.current.type)
+      await updateTaskStatus(active.id, over.data.current.type)
   }
 
   return (

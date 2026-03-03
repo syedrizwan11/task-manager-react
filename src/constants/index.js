@@ -1,27 +1,31 @@
-export const SIGNUP_API_URL = "http://localhost:3000/auth/register"
-export const LOGIN_API_URL = "http://localhost:3000/auth/login"
-export const LOGOUT_API_URL = "http://localhost:3000/auth/logout"
-export const TOKEN_DECODE_API_URL = "http://localhost:3000/auth/decodeToken"
-export const TASKS_API_URL = "http://localhost:3000/api/tasks"
-export const TASK_ASSIGN_API_URL = "http://localhost:3000/api/assign-task"
-export const TASK_COMPLETE_API_URL =
-  "http://localhost:3000/api/mark-task-as-completed"
+export const BASE_API = "http://localhost:3000/"
 
-export const USER_API_URL = "http://localhost:3000/api/users"
-export const GET_CURRENT_USER_API_URL = "http://localhost:3000/api/current-user"
-export const UPDATE_USER_PROFILE_API_URL =
-  "http://localhost:3000/api/update-user-profile"
+// Auth
+export const SIGNUP_API_URL = `${BASE_API}auth/register`
+export const LOGIN_API_URL = `${BASE_API}auth/login`
+export const LOGOUT_API_URL = `${BASE_API}auth/logout`
+export const TOKEN_DECODE_API_URL = `${BASE_API}auth/decodeToken`
 
-export const USER_COUNT_API_URL = "http://localhost:3000/api/users-count"
-export const TASK_COUNT_API_URL = "http://localhost:3000/api/tasks-count"
+// Task
+export const TASKS_API_URL = `${BASE_API}api/tasks`
+export const TASK_ASSIGN_API_URL = `${BASE_API}api/assign-task`
+export const UPDATE_TASK_STATUS_API_URL = `${BASE_API}api/tasks/:id/status`
 
-export const TaskStatus = {
+// User
+export const USER_API_URL = `${BASE_API}api/users`
+export const GET_CURRENT_USER_API_URL = `${BASE_API}api/current-user`
+export const UPDATE_USER_PROFILE_API_URL = `${BASE_API}api/update-user-profile`
+
+export const USER_COUNT_API_URL = `${BASE_API}api/users-count`
+export const TASK_COUNT_API_URL = `${BASE_API}api/tasks-count`
+
+export const TaskStatus = Object.freeze({
   PENDING: "pending",
-  INPROGRESS: "inProgress",
+  INPROGRESS: "inprogress",
   COMPLETED: "completed",
-}
+})
 
-export const UserRole = {
+export const UserRole = Object.freeze({
   ADMIN: "admin",
   USER: "user",
-}
+})

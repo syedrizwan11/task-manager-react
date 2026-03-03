@@ -3,7 +3,6 @@ import { ActionButton } from "../../components/ActionButton"
 import { TaskStatus, UserRole } from "../../constants"
 import { FiEdit } from "react-icons/fi"
 import { AssignTask } from "./AssignTask"
-import { MarkTaskAsCompleted } from "./MarkTaskAsCompleted"
 import { useAuth } from "../../hooks/useAuth"
 import { useNavigate } from "react-router"
 import { useDraggable } from "@dnd-kit/core"
@@ -12,6 +11,7 @@ import { CSS } from "@dnd-kit/utilities"
 export const TaskCard = ({ task, onDelete, onUpdate }) => {
   const { setNodeRef, listeners, attributes, transform } = useDraggable({
     id: task._id,
+    data: { type: task.status },
   })
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -69,7 +69,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
         )}
       </div>
       <div className="mt-4 flex items-center gap-2 justify-end">
-        {!task.completedAt && (
+        {/* {!task.completedAt && (
           <MarkTaskAsCompleted
             taskId={task._id}
             getUpdatedTaskData={onUpdate}
@@ -77,7 +77,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
               task.assignedTo?._id !== user?.id && user.role !== UserRole.ADMIN
             }
           />
-        )}
+        )} */}
         {!task.completedAt && user?.role === "admin" && (
           <AssignTask
             assignedTo={task.assignedTo?.email}
