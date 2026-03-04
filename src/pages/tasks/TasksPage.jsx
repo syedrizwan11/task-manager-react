@@ -81,7 +81,7 @@ export const TasksPage = () => {
 
   const isAdmin = user.role === UserRole.ADMIN
 
-  const taskGroups = groupTasksByUserAndStatus(tasks, user.id)
+  const taskGroups = groupTasksByUserAndStatus(tasks, user.id, user.role)
 
   const handleDragEnd = async (event) => {
     const { active, over } = event
@@ -116,19 +116,32 @@ export const TasksPage = () => {
         {!loading && tasks.length > 0 && (
           <div className="overflow-x-auto">
             <div className="grid w-max grid-cols-[repeat(4,minmax(400px,1fr))] pb-4">
-              <TaskSection
-                title="Your Created Tasks"
-                type={"createdTasks"}
-                tasks={taskGroups.createdByYou}
-                onDelete={deleteTask}
-                onUpdate={updateCurrentTask}
-                infoMessage={
-                  <div className="px-2 pb-3">
-                    Tasks You Created but cannot act on.
-                    <br /> (Unassigned tasks or assigned to someone else)
-                  </div>
-                }
-              />
+              {isAdmin ? (
+                <TaskSection
+                  title="Unassigned Tasks"
+                  type="backlog"
+                  tasks={taskGroups.unassigned}
+                  onDelete={deleteTask}
+                  onUpdate={updateCurrentTask}
+                  infoMessage={
+                    <>Tasks that are not assigned to any user yet.</>
+                  }
+                />
+              ) : (
+                <TaskSection
+                  title="Your Created Tasks"
+                  type="created"
+                  tasks={taskGroups.createdByYou}
+                  onDelete={deleteTask}
+                  onUpdate={updateCurrentTask}
+                  infoMessage={
+                    <div className="px-2 pb-3">
+                      Tasks You Created but cannot act on.
+                      <br /> (Unassigned tasks or assigned to someone else)
+                    </div>
+                  }
+                />
+              )}
               <TaskSection
                 title="Pending Tasks"
                 type={TaskStatus.PENDING}
