@@ -1,7 +1,16 @@
 import { useDroppable } from "@dnd-kit/core"
 import { TaskCard } from "./TaskCard"
+import { FaCircleInfo } from "react-icons/fa6"
+import PopupButton from "../../components/PopupButton"
 
-export const TaskSection = ({ title, type, tasks, onDelete, onUpdate }) => {
+export const TaskSection = ({
+  title,
+  type,
+  tasks,
+  onDelete,
+  onUpdate,
+  infoMessage,
+}) => {
   const { setNodeRef, isOver } = useDroppable({
     id: title,
     data: {
@@ -18,9 +27,15 @@ export const TaskSection = ({ title, type, tasks, onDelete, onUpdate }) => {
     >
       <h3
         style={style}
-        className="bg-blue-900 rounded p-4 text-white w-full text-xl font-semibold mb-3 text-center"
+        className="bg-blue-900 rounded p-4 text-white w-full text-xl font-semibold mb-3 text-center flex justify-around"
       >
-        {title}
+        <div className="grow">{title}</div>
+        {infoMessage && (
+          <PopupButton
+            icon={<FaCircleInfo aria-label="Info" />}
+            message={infoMessage}
+          />
+        )}
       </h3>
       <div className="space-y-4">
         {tasks.length === 0 && (
