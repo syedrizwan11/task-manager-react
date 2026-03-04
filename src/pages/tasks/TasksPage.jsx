@@ -12,7 +12,8 @@ import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
 import { TaskSection } from "./TaskSection"
 import { DndContext } from "@dnd-kit/core"
-import { taskGroupsByStatus } from "../../utils/tasks/taskGroupsByStatus"
+import { groupTasksByUserAndStatus } from "../../utils/tasks/groupTasksByUserAndStatus"
+import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers"
 
 export const TasksPage = () => {
   const [tasks, setTasks] = useState([])
@@ -80,7 +81,7 @@ export const TasksPage = () => {
 
   const isAdmin = user.role === UserRole.ADMIN
 
-  const taskGroups = taskGroupsByStatus(tasks)
+  const taskGroups = groupTasksByUserAndStatus(tasks, user.id)
 
   const handleDragEnd = async (event) => {
     const { active, over } = event
@@ -90,7 +91,10 @@ export const TasksPage = () => {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd}>
+    <DndContext
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToFirstScrollableAncestor]}
+    >
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="flex items-center justify-between mb-8">
           {isAdmin && <BackButton label="Dashboard" to="/admin-page" />}
@@ -110,30 +114,45 @@ export const TasksPage = () => {
         )}
 
         {!loading && tasks.length > 0 && (
-          <div className="grid grid-cols-3">
-            <TaskSection
-              title="Pending Tasks"
-              type={TaskStatus.PENDING}
-              tasks={taskGroups.pending}
-              onDelete={deleteTask}
-              onUpdate={updateCurrentTask}
-            />
+          <div className="overflow-x-auto">
+            <div className="grid w-max grid-cols-[repeat(4,minmax(400px,1fr))] pb-4">
+              <TaskSection
+                title="Your Created Tasks"
+                type={"createdTasks"}
+                tasks={taskGroups.createdByYou}
+                onDelete={deleteTask}
+                onUpdate={updateCurrentTask}
+                infoMessage={
+                  <div className="px-2 pb-3">
+                    Tasks You Created but cannot act on.
+                    <br /> (Unassigned tasks or assigned to someone else)
+                  </div>
+                }
+              />
+              <TaskSection
+                title="Pending Tasks"
+                type={TaskStatus.PENDING}
+                tasks={taskGroups.pending}
+                onDelete={deleteTask}
+                onUpdate={updateCurrentTask}
+              />
 
-            <TaskSection
-              title="In Progress Tasks"
-              type={TaskStatus.INPROGRESS}
-              tasks={taskGroups.inProgress}
-              onDelete={deleteTask}
-              onUpdate={updateCurrentTask}
-            />
+              <TaskSection
+                title="In Progress Tasks"
+                type={TaskStatus.INPROGRESS}
+                tasks={taskGroups.inprogress}
+                onDelete={deleteTask}
+                onUpdate={updateCurrentTask}
+              />
 
-            <TaskSection
-              title="Completed Tasks"
-              type={TaskStatus.COMPLETED}
-              tasks={taskGroups.completed}
-              onDelete={deleteTask}
-              onUpdate={updateCurrentTask}
-            />
+              <TaskSection
+                title="Completed Tasks"
+                type={TaskStatus.COMPLETED}
+                tasks={taskGroups.completed}
+                onDelete={deleteTask}
+                onUpdate={updateCurrentTask}
+              />
+            </div>
           </div>
         )}
       </div>

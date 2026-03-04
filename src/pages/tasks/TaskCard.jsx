@@ -9,16 +9,20 @@ import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 
 export const TaskCard = ({ task, onDelete, onUpdate }) => {
+  const { user } = useAuth()
+  const isAssignedToUser = task.assignedTo?._id === user?.id
+  const isOwner = task.createdBy._id === user?.id
+  const isAdmin = user?.role === UserRole.ADMIN
+  const isDraggable = isAssignedToUser || isAdmin
+
   const { setNodeRef, listeners, attributes, transform } = useDraggable({
     id: task._id,
     data: { type: task.status },
+    disabled: !isDraggable,
   })
   const navigate = useNavigate()
-  const { user } = useAuth()
   const canDelete =
-    user.role === UserRole.ADMIN ||
-    (task.createdBy._id === user.id &&
-      (!task.assignedTo || task.assignedTo._id === user.id))
+    isAdmin || (isOwner && (!task.assignedTo || isAssignedToUser))
 
   const style = { transform: CSS.Translate.toString(transform) }
 
@@ -28,7 +32,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
       {...listeners}
       {...attributes}
       style={style}
-      className={`bg-white p-5 rounded-lg border border-gray-200 shadow-sm ${task.completed ? "opacity-60" : ""}`}
+      className={`bg-white p-5 rounded-lg ${isDraggable ? "border-l-4 border-blue-500 cursor-grabbing" : "border-4 border-dashed border-gray-400"} shadow-sm ${task.completed ? "opacity-60" : ""}`}
     >
       <div className="flex justify-between items-center py-2">
         <h1 className="text-lg font-semibold text-gray-800">
@@ -69,16 +73,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
         )}
       </div>
       <div className="mt-4 flex items-center gap-2 justify-end">
-        {/* {!task.completedAt && (
-          <MarkTaskAsCompleted
-            taskId={task._id}
-            getUpdatedTaskData={onUpdate}
-            disabled={
-              task.assignedTo?._id !== user?.id && user.role !== UserRole.ADMIN
-            }
-          />
-        )} */}
-        {!task.completedAt && user?.role === "admin" && (
+        {!task.completedAt && isAdmin && (
           <AssignTask
             assignedTo={task.assignedTo?.email}
             taskId={task._id}
@@ -88,7 +83,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
         )}
         <ActionButton
           onClick={() => navigate(`/tasks/form?taskId=${task._id}`)}
-          disabled={task.createdBy._id !== user.id || task.completedAt}
+          disabled={!isOwner || task.completedAt}
           icon={FiEdit}
         />
         <ActionButton
