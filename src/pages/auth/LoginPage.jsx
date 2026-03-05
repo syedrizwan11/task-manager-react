@@ -1,9 +1,8 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
-import { LOGIN_API_URL } from "../../constants"
 import { Link } from "react-router"
 import { useAuth } from "../../hooks/useAuth"
 import { gotoDashboard } from "../../utils/gotoDashboard"
+import { loginApi } from "../../api/auth.api"
 
 export const LoginPage = () => {
   const { setUserData, user } = useAuth()
@@ -26,15 +25,8 @@ export const LoginPage = () => {
     e.preventDefault()
     setLoading(true)
     try {
-      const res = await axios.post(
-        LOGIN_API_URL,
-        {
-          email: formData.email,
-          password: formData.password,
-        },
-        { withCredentials: true },
-      )
-      setUserData(res.data.data)
+      const res = await loginApi(formData)
+      setUserData(res.data)
       window.alert("Logged in successfully!")
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {

@@ -1,7 +1,6 @@
-import axios from "axios"
 import { AuthContext } from "./userContext"
 import { useEffect, useState } from "react"
-import { TOKEN_DECODE_API_URL } from "../../constants"
+import { decodeTokenApi } from "../../api/auth.api"
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
@@ -13,11 +12,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUserFromToken = async () => {
       try {
-        const res = await axios.get(TOKEN_DECODE_API_URL, {
-          withCredentials: true,
-        })
-
-        setUserData(res.data.data)
+        const res = await decodeTokenApi()
+        setUserData(res.data)
       } catch (error) {
         console.error("Failed to fetch user from token", error)
       } finally {

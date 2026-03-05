@@ -2,9 +2,8 @@ import { useRef } from "react"
 import { FaUserCircle } from "react-icons/fa"
 import { useAuth } from "../hooks/useAuth"
 import { useNavigate } from "react-router"
-import { LOGOUT_API_URL } from "../constants"
-import axios from "axios"
 import PopupButton from "./PopupButton"
+import { logoutApi } from "../api/auth.api"
 
 const UserProfilePopup = () => {
   const navigate = useNavigate()
@@ -13,13 +12,9 @@ const UserProfilePopup = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post(
-        LOGOUT_API_URL,
-        {},
-        { withCredentials: true },
-      )
+      const response = await logoutApi()
 
-      if (response.data.success) {
+      if (response.success) {
         setUserData(null)
         navigate("/login")
       }

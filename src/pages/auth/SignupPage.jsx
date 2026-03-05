@@ -1,7 +1,7 @@
-import axios from "axios"
 import { useState } from "react"
 import { SIGNUP_API_URL } from "../../constants"
 import { Link, useNavigate } from "react-router"
+import { signupApi } from "../../api/auth.api"
 
 export const SignupPage = () => {
   const navigate = useNavigate()
@@ -40,12 +40,8 @@ export const SignupPage = () => {
     setLoading(true)
 
     try {
-      const res = await axios.post(SIGNUP_API_URL, {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      })
-      console.log(res)
+      const { confirmPassword: _skip, ...dataToSend } = formData
+      await signupApi(dataToSend)
       window.alert("Account created successfully!")
       navigate("/login")
     } catch (err) {
