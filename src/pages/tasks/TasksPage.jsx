@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
-import axios from "axios"
-import {
-  TASKS_API_URL,
-  TaskStatus,
-  UPDATE_TASK_STATUS_API_URL,
-  UserRole,
-} from "../../constants"
+import { TaskStatus, UserRole } from "../../constants"
 import { Loader } from "../../components/Loader"
 import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
@@ -14,6 +8,11 @@ import { TaskSection } from "./TaskSection"
 import { DndContext } from "@dnd-kit/core"
 import { groupTasksByUserAndStatus } from "../../utils/tasks/groupTasksByUserAndStatus"
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers"
+import {
+  deleteTaskApi,
+  fetchTasksApi,
+  updateTaskStatusApi,
+} from "../../api/tasks.api"
 
 export const TasksPage = () => {
   const [tasks, setTasks] = useState([])
@@ -22,10 +21,8 @@ export const TasksPage = () => {
 
   const fetchTasks = useCallback(async () => {
     try {
-      const res = await axios.get(TASKS_API_URL, {
-        withCredentials: true,
-      })
-      setTasks(res.data.data)
+      const res = await fetchTasksApi()
+      setTasks(res.data)
     } finally {
       setLoading(false)
     }
@@ -37,9 +34,7 @@ export const TasksPage = () => {
 
   const deleteTask = async (taskId) => {
     try {
-      await axios.delete(`${TASKS_API_URL}/${taskId}`, {
-        withCredentials: true,
-      })
+      await deleteTaskApi(taskId)
       setTasks((prev) => prev.filter((t) => t._id !== taskId))
     } catch {
       alert("Failed to delete task")
@@ -61,13 +56,7 @@ export const TasksPage = () => {
     updateCurrentTask(taskId, { status })
 
     try {
-      const res = await axios.patch(
-        `${UPDATE_TASK_STATUS_API_URL.replace(":id", taskId)}`,
-        {
-          status,
-        },
-        { withCredentials: true },
-      )
+      const res = await updateTaskStatusApi(taskId, status)
 
       updateCurrentTask(taskId, {
         status: res.data.data.status,

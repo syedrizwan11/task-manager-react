@@ -1,24 +1,16 @@
 import { useContext } from "react"
-import axios from "axios"
-import { USER_API_URL, TASK_ASSIGN_API_URL } from "../../constants"
 import { UsersContext } from "../../context/users/usersContext"
+import { assignTaskApi } from "../../api/tasks.api"
 
 export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
   const { users, loading } = useContext(UsersContext)
 
   const assignTask = async (userId) => {
     try {
-      const res = await axios.post(
-        TASK_ASSIGN_API_URL,
-        {
-          id: taskId,
-          assignedTo: userId,
-        },
-        { withCredentials: true },
-      )
+      const res = await assignTaskApi(taskId, userId)
 
-      if (res.data.success) {
-        getUpdatedTaskData(taskId, { assignedTo: res.data.data.assignedTo })
+      if (res.success) {
+        getUpdatedTaskData(taskId, { assignedTo: res.data.assignedTo })
       }
     } catch (error) {
       console.error("Failed to assign task", error)

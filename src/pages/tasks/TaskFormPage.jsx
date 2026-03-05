@@ -1,9 +1,11 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
-import { TASKS_API_URL } from "../../constants"
-import { Link, useLocation } from "react-router"
-import { IoArrowBackCircleSharp } from "react-icons/io5"
+import { useLocation } from "react-router"
 import { BackButton } from "../../components/BackButton"
+import {
+  createTaskApi,
+  fetchTaskByIdApi,
+  updateTaskApi,
+} from "../../api/tasks.api"
 
 export const TaskFormPage = () => {
   const location = useLocation()
@@ -31,30 +33,8 @@ export const TaskFormPage = () => {
     setLoading(true)
     try {
       taskId
-        ? await axios.patch(
-            `${TASKS_API_URL}/${taskId}`,
-            {
-              title: formData.title,
-              description: formData.description,
-              dueDate: formData.dueDate,
-            },
-            { withCredentials: true },
-          )
-        : await axios.post(
-            TASKS_API_URL,
-            {
-              title: formData.title,
-              description: formData.description,
-              dueDate: formData.dueDate,
-            },
-            { withCredentials: true },
-          )
-      window.alert("Operation successful!")
-      setFormData({
-        title: "",
-        description: "",
-        dueDate: "",
-      })
+        ? await updateTaskApi(taskId, formData)
+        : await createTaskApi(formData)
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         window.alert(err.response.data.error)
@@ -71,17 +51,16 @@ export const TaskFormPage = () => {
 
     const fetchTaskData = async () => {
       try {
-        const res = await axios.get(`${TASKS_API_URL}/${taskId}`, {
-          withCredentials: true,
-        })
-        const task = res.data.data
+        const res = await fetchTaskByIdApi(taskId)
+        const task = res.data
         setFormData({
           title: task.title,
           description: task.description,
-          dueDate: task.dueDate ? task.dueDate.split("T")[0] : "",
+          dueDate: task.dueDate?.split("T")[0] || "",
         })
       } catch (err) {
         console.error("Failed to fetch task data:", err)
+        alert("Failed to load task data. Please try again.")
       }
     }
 
@@ -100,7 +79,7 @@ export const TaskFormPage = () => {
         </h2>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Title</label>
+          <label className="block text-sm font-me,dium mb-1">Title</label>
           <input
             type="text"
             name="title"
