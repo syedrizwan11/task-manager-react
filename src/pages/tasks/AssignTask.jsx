@@ -1,6 +1,7 @@
 import { useContext } from "react"
 import { UsersContext } from "../../context/users/usersContext"
 import { assignTaskApi } from "../../api/tasks.api"
+import { toast } from "sonner"
 
 export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
   const { users, loading } = useContext(UsersContext)
@@ -14,6 +15,7 @@ export const AssignTask = ({ assignedTo, taskId, getUpdatedTaskData }) => {
       }
     } catch (error) {
       console.error("Failed to assign task", error)
+      toast.error("An error occurred. Please try again.")
     }
   }
 

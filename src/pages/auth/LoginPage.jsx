@@ -3,6 +3,7 @@ import { Link } from "react-router"
 import { useAuth } from "../../hooks/useAuth"
 import { gotoDashboard } from "../../utils/gotoDashboard"
 import { loginApi } from "../../api/auth.api"
+import { toast } from "sonner"
 
 export const LoginPage = () => {
   const { setUserData, user } = useAuth()
@@ -27,13 +28,11 @@ export const LoginPage = () => {
     try {
       const res = await loginApi(formData)
       setUserData(res.data)
-      window.alert("Logged in successfully!")
+      toast.success("Logged in successfully!")
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        window.alert(err.response.data.error)
-      } else {
-        window.alert("An error occurred. Please try again.")
-      }
+      toast.error(
+        err.response?.data?.error || "An error occurred. Please try again.",
+      )
     } finally {
       setLoading(false)
     }

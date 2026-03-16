@@ -2,6 +2,7 @@ import { useState } from "react"
 import { SIGNUP_API_URL } from "../../constants"
 import { Link, useNavigate } from "react-router"
 import { signupApi } from "../../api/auth.api"
+import { toast } from "sonner"
 
 export const SignupPage = () => {
   const navigate = useNavigate()
@@ -42,14 +43,12 @@ export const SignupPage = () => {
     try {
       const { confirmPassword: _skip, ...dataToSend } = formData
       await signupApi(dataToSend)
-      window.alert("Account created successfully!")
+      toast.success("Account created successfully!")
       navigate("/login")
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        window.alert(err.response.data.error)
-      } else {
-        window.alert("An error occurred. Please try again.")
-      }
+      toast.error(
+        err?.response?.data?.error || "An error occurred. Please try again.",
+      )
     } finally {
       setLoading(false)
     }

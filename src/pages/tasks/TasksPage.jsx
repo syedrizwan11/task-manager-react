@@ -5,7 +5,7 @@ import { Loader } from "../../components/Loader"
 import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
 import { TaskSection } from "./TaskSection"
-import { DndContext } from "@dnd-kit/core"
+import { DndContext, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { groupTasksByUserAndStatus } from "../../utils/tasks/groupTasksByUserAndStatus"
 import { restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers"
 import {
@@ -13,6 +13,7 @@ import {
   fetchTasksApi,
   updateTaskStatusApi,
 } from "../../api/tasks.api"
+import { toast } from "sonner"
 
 export const TasksPage = () => {
   const [tasks, setTasks] = useState([])
@@ -32,13 +33,17 @@ export const TasksPage = () => {
     fetchTasks()
   }, [fetchTasks])
 
-  const deleteTask = async (taskId) => {
-    try {
-      await deleteTaskApi(taskId)
-      setTasks((prev) => prev.filter((t) => t._id !== taskId))
-    } catch {
-      alert("Failed to delete task")
-    }
+  const deleteTask = (taskId) => {
+    toast.promise(
+      deleteTaskApi(taskId).then(() => {
+        setTasks((prev) => prev.filter((t) => t._id !== taskId))
+      }),
+      {
+        loading: "Deleting task...",
+        success: "Task deleted successfully!",
+        error: "Failed to delete task",
+      },
+    )
   }
 
   const updateCurrentTask = (taskId, updatedFields) => {
@@ -79,10 +84,19 @@ export const TasksPage = () => {
       await updateTaskStatus(active.id, over.data.current.type)
   }
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  )
+
   return (
     <DndContext
       onDragEnd={handleDragEnd}
       modifiers={[restrictToFirstScrollableAncestor]}
+      sensors={sensors}
     >
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="flex items-center justify-between mb-8">

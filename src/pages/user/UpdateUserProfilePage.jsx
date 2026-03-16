@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth"
 import { BackButton } from "../../components/BackButton"
 import { gotoDashboard } from "../../utils/gotoDashboard"
 import { fetchCurrentUserApi, updateUserProfileApi } from "../../api/user.api"
+import { toast } from "sonner"
 
 export const UpdateUserProfilePage = () => {
   const { user } = useAuth()
@@ -27,13 +28,11 @@ export const UpdateUserProfilePage = () => {
     try {
       await updateUserProfileApi(formData)
       gotoDashboard(user.role)
-      window.alert("Operation successful!")
+      toast.success("Profile updated successfully!")
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        window.alert(err.response.data.error)
-      } else {
-        window.alert("An error occurred. Please try again.")
-      }
+      toast.error(
+        err?.response?.data?.error || "An error occurred. Please try again.",
+      )
     } finally {
       setLoading(false)
     }

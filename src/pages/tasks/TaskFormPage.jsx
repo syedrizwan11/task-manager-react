@@ -6,6 +6,7 @@ import {
   fetchTaskByIdApi,
   updateTaskApi,
 } from "../../api/tasks.api"
+import { toast } from "sonner"
 
 export const TaskFormPage = () => {
   const location = useLocation()
@@ -35,12 +36,11 @@ export const TaskFormPage = () => {
       taskId
         ? await updateTaskApi(taskId, formData)
         : await createTaskApi(formData)
+      toast.success(`Task ${taskId ? "updated" : "created"} successfully!`)
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        window.alert(err.response.data.error)
-      } else {
-        window.alert("An error occurred. Please try again.")
-      }
+      toast.error(
+        err?.response?.data?.error || "An error occurred. Please try again.",
+      )
     } finally {
       setLoading(false)
     }

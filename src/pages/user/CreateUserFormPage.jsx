@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { BackButton } from "../../components/BackButton"
 import { createUserApi } from "../../api/user.api"
+import { toast } from "sonner"
 
 export const CreateUserFormPage = () => {
   const [error, setError] = useState("")
@@ -38,7 +39,7 @@ export const CreateUserFormPage = () => {
     try {
       const { confirmPassword: _skip, ...dataToSend } = formData
       await createUserApi(dataToSend)
-      window.alert("Operation successful!")
+      toast.success("Operation successful!")
       setFormData({
         name: "",
         email: "",
@@ -46,11 +47,9 @@ export const CreateUserFormPage = () => {
         confirmPassword: "",
       })
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        window.alert(err.response.data.error)
-      } else {
-        window.alert("An error occurred. Please try again.")
-      }
+      toast.error(
+        err?.response?.data?.error || "An error occurred. Please try again.",
+      )
     } finally {
       setLoading(false)
     }

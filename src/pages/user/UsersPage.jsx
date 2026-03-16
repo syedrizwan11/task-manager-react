@@ -5,6 +5,7 @@ import { Loader } from "../../components/Loader"
 import { MdDelete } from "react-icons/md"
 import { ActionButton } from "../../components/ActionButton"
 import { deleteUserApi, fetchUsersApi } from "../../api/user.api"
+import { toast } from "sonner"
 
 export const UsersPage = () => {
   const [users, setUsers] = useState([])
@@ -18,7 +19,10 @@ export const UsersPage = () => {
         setLoading(false)
       } catch (error) {
         console.error("Error fetching users:", error)
-        window.alert("Error fetching users")
+        toast.error(
+          error?.response?.data?.error ||
+            "An error occurred. Please try again.",
+        )
         setLoading(false)
       }
     }
@@ -30,11 +34,14 @@ export const UsersPage = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return
 
     try {
-      await deleteUserApi(id)
+      toast.promise(deleteUserApi(id), {
+        loading: "Deleting user...",
+        success: "User deleted successfully!",
+      })
       setUsers(users.filter((user) => user._id !== id))
     } catch (error) {
       console.error("Error deleting user:", error)
-      window.alert("Error deleting user")
+      toast.error("Error deleting user")
     }
   }
 

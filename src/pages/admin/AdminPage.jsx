@@ -4,6 +4,7 @@ import { LuExternalLink } from "react-icons/lu"
 import { Loader } from "../../components/Loader"
 import { userCountApi } from "../../api/user.api"
 import { taskCountApi } from "../../api/tasks.api"
+import { toast } from "sonner"
 
 export const AdminPage = () => {
   const [count, setCount] = useState({ users: 0, tasks: 0 })
@@ -23,6 +24,7 @@ export const AdminPage = () => {
         })
       } catch (error) {
         console.error("Failed to fetch admin counts", error)
+        toast.error("Failed to fetch admin counts")
       } finally {
         setLoading(false)
       }
