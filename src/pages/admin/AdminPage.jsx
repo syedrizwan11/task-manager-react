@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
-import { TASK_COUNT_API_URL, USER_COUNT_API_URL } from "../../constants"
 import { Link } from "react-router"
 import { LuExternalLink } from "react-icons/lu"
 import { Loader } from "../../components/Loader"
+import { userCountApi } from "../../api/user.api"
+import { taskCountApi } from "../../api/tasks.api"
 
 export const AdminPage = () => {
   const [count, setCount] = useState({ users: 0, tasks: 0 })
@@ -13,13 +13,13 @@ export const AdminPage = () => {
     const fetchCounts = async () => {
       try {
         const [usersRes, tasksRes] = await Promise.all([
-          axios.get(USER_COUNT_API_URL, { withCredentials: true }),
-          axios.get(TASK_COUNT_API_URL, { withCredentials: true }),
+          userCountApi(),
+          taskCountApi(),
         ])
 
         setCount({
-          users: usersRes.data.data,
-          tasks: tasksRes.data.data,
+          users: usersRes.data,
+          tasks: tasksRes.data,
         })
       } catch (error) {
         console.error("Failed to fetch admin counts", error)

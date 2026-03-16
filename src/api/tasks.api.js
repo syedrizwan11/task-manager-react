@@ -1,6 +1,7 @@
 import axios from "axios"
 import {
   TASK_ASSIGN_API_URL,
+  TASK_COUNT_API_URL,
   TASKS_API_URL,
   UPDATE_TASK_STATUS_API_URL,
 } from "../constants"
@@ -40,4 +41,9 @@ export const updateTaskApi = (taskId, taskData) =>
 export const assignTaskApi = (id, assignedTo) =>
   axios
     .post(TASK_ASSIGN_API_URL, { id, assignedTo }, { withCredentials: true })
+    .then((res) => res.data)
+
+export const taskCountApi = () =>
+  axios
+    .get(TASK_COUNT_API_URL, { withCredentials: true })
     .then((res) => res.data)
