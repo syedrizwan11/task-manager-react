@@ -23,7 +23,7 @@ export const TaskSection = ({
   return (
     <div
       ref={setNodeRef}
-      className="not-first:border-l-4 border-dashed border-gray-400 px-4"
+      className="not-first:border-l-4 border-blue-900/40 px-4"
     >
       <h3
         style={style}

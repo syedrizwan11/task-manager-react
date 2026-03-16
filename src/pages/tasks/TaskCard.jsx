@@ -13,12 +13,11 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
   const isAssignedToUser = task.assignedTo?._id === user?.id
   const isOwner = task.createdBy._id === user?.id
   const isAdmin = user?.role === UserRole.ADMIN
-  const isDraggable = isAssignedToUser || isAdmin
+  const isDraggable = isAssignedToUser || (isAdmin && task.assignedTo)
 
   const { setNodeRef, listeners, attributes, transform } = useDraggable({
     id: task._id,
     data: { type: task.status },
-    disabled: !isDraggable,
   })
   const navigate = useNavigate()
   const canDelete =
@@ -32,7 +31,7 @@ export const TaskCard = ({ task, onDelete, onUpdate }) => {
       {...listeners}
       {...attributes}
       style={style}
-      className={`bg-white p-5 rounded-lg ${isDraggable ? "border-l-4 border-blue-500 cursor-grabbing" : "border-4 border-dashed border-gray-400"} shadow-sm ${task.completed ? "opacity-60" : ""}`}
+      className={`bg-white p-5 rounded-lg ${isDraggable ? "border-l-4 border-blue-500 cursor-grabbing" : "border-l-4 border-dashed border-gray-400"} shadow-sm ${task.completed ? "opacity-60" : ""}`}
     >
       <div className="flex justify-between items-center py-2">
         <h1 className="text-lg font-semibold text-gray-800">

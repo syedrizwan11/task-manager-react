@@ -59,8 +59,8 @@ export const TasksPage = () => {
       const res = await updateTaskStatusApi(taskId, status)
 
       updateCurrentTask(taskId, {
-        status: res.data.data.status,
-        completedAt: res.data.data.completedAt,
+        status: res.data.status,
+        completedAt: res.data.completedAt,
       })
     } catch (error) {
       updateCurrentTask(taskId, prevTaskStatus)
@@ -103,8 +103,8 @@ export const TasksPage = () => {
         )}
 
         {!loading && tasks.length > 0 && (
-          <div className="overflow-x-auto">
-            <div className="grid w-max grid-cols-[repeat(4,minmax(400px,1fr))] pb-4">
+          <div className="overflow-x-auto border-l-4 border-r-4 border-blue-900/40">
+            <div className="grid w-max grid-cols-[repeat(4,minmax(350px,1fr))] pb-4">
               {isAdmin ? (
                 <TaskSection
                   title="Unassigned Tasks"
