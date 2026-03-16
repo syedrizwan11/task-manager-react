@@ -12,32 +12,36 @@ import { CreateUserFormPage } from "./pages/user/CreateUserFormPage"
 import { UpdateUserProfilePage } from "./pages/user/UpdateUserProfilePage"
 import { TaskFormPage } from "./pages/tasks/TaskFormPage"
 import { UsersProvider } from "./context/users/UsersProvider"
+import { Toaster } from "sonner"
 
 function App() {
   return (
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route element={<AuthLayout />}>
-          <Route
-            path="/tasks"
-            element={
-              <UsersProvider>
-                <TasksPage />
-              </UsersProvider>
-            }
-          />
-          <Route path="/tasks/form" element={<TaskFormPage />} />
-          <Route path="/profile" element={<UpdateUserProfilePage />} />
-          <Route element={<AdminLayout />}>
-            <Route path="/admin-page" element={<AdminPage key="admin" />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/users/form" element={<CreateUserFormPage />} />
+    <div>
+      <Toaster position="top-center" richColors />
+      <Routes>
+        <Route element={<MainLayout />}>
+          <Route element={<AuthLayout />}>
+            <Route
+              path="/tasks"
+              element={
+                <UsersProvider>
+                  <TasksPage />
+                </UsersProvider>
+              }
+            />
+            <Route path="/tasks/form" element={<TaskFormPage />} />
+            <Route path="/profile" element={<UpdateUserProfilePage />} />
+            <Route element={<AdminLayout />}>
+              <Route path="/admin-page" element={<AdminPage key="admin" />} />
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="/users/form" element={<CreateUserFormPage />} />
+            </Route>
           </Route>
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/login" element={<LoginPage />} />
-      </Route>
-    </Routes>
+      </Routes>
+    </div>
   )
 }
 
