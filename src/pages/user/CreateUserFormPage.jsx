@@ -1,7 +1,6 @@
-import axios from "axios"
 import { useState } from "react"
-import { USER_API_URL } from "../../constants"
 import { BackButton } from "../../components/BackButton"
+import { createUserApi } from "../../api/user.api"
 
 export const CreateUserFormPage = () => {
   const [error, setError] = useState("")
@@ -37,15 +36,8 @@ export const CreateUserFormPage = () => {
     if (error) return
     setLoading(true)
     try {
-      await axios.post(
-        USER_API_URL,
-        {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        },
-        { withCredentials: true },
-      )
+      const { confirmPassword: _skip, ...dataToSend } = formData
+      await createUserApi(dataToSend)
       window.alert("Operation successful!")
       setFormData({
         name: "",

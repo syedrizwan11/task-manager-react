@@ -1,13 +1,9 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
-import {
-  GET_CURRENT_USER_API_URL,
-  UPDATE_USER_PROFILE_API_URL,
-  UserRole,
-} from "../../constants"
+import { UserRole } from "../../constants"
 import { useAuth } from "../../hooks/useAuth"
 import { BackButton } from "../../components/BackButton"
 import { gotoDashboard } from "../../utils/gotoDashboard"
+import { fetchCurrentUserApi, updateUserProfileApi } from "../../api/user.api"
 
 export const UpdateUserProfilePage = () => {
   const { user } = useAuth()
@@ -29,14 +25,7 @@ export const UpdateUserProfilePage = () => {
     e.preventDefault()
     setLoading(true)
     try {
-      await axios.patch(
-        `${UPDATE_USER_PROFILE_API_URL}`,
-        {
-          name: formData.name,
-          email: formData.email,
-        },
-        { withCredentials: true },
-      )
+      await updateUserProfileApi(formData)
       gotoDashboard(user.role)
       window.alert("Operation successful!")
     } catch (err) {
@@ -53,13 +42,10 @@ export const UpdateUserProfilePage = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await axios.get(`${GET_CURRENT_USER_API_URL}`, {
-          withCredentials: true,
-        })
-        const user = res.data.data
+        const res = await fetchCurrentUserApi()
         setFormData({
-          name: user.name,
-          email: user.email,
+          name: res.data.name,
+          email: res.data.email,
         })
       } catch (err) {
         console.error("Failed to fetch user data:", err)

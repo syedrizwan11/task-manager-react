@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
-import { USER_API_URL } from "../../constants"
 import { Link } from "react-router"
 import { BackButton } from "../../components/BackButton"
 import { Loader } from "../../components/Loader"
 import { MdDelete } from "react-icons/md"
 import { ActionButton } from "../../components/ActionButton"
+import { deleteUserApi, fetchUsersApi } from "../../api/user.api"
 
 export const UsersPage = () => {
   const [users, setUsers] = useState([])
@@ -14,10 +13,8 @@ export const UsersPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(USER_API_URL, {
-          withCredentials: true,
-        })
-        setUsers(response.data.data)
+        const response = await fetchUsersApi()
+        setUsers(response.data)
         setLoading(false)
       } catch (error) {
         console.error("Error fetching users:", error)
@@ -33,7 +30,7 @@ export const UsersPage = () => {
     if (!window.confirm("Are you sure you want to delete this user?")) return
 
     try {
-      await axios.delete(`${USER_API_URL}/${id}`, { withCredentials: true })
+      await deleteUserApi(id)
       setUsers(users.filter((user) => user._id !== id))
     } catch (error) {
       console.error("Error deleting user:", error)
